@@ -19,6 +19,8 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 echo "Initializing Terraform..."
+                export ARM_USE_MSI=false
+                export ARM_USE_OIDC=true
                 sh 'terraform init'
             }
         }
