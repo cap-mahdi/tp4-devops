@@ -50,7 +50,10 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                sh '''
+                    export ARM_USE_OIDC=true
+                    terraform apply -auto-approve tfplan
+                    '''
             }
         }
         stage('Get VM IP') {
