@@ -6,6 +6,7 @@ provider "azurerm" {
 resource "azurerm_resource_group" "rg" {
   name     = "rg-devops-lab"
   location = "East US"
+
 }
 
 resource "azurerm_virtual_network" "vnet" {

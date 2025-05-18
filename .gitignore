@@ -1,5 +1,6 @@
-.terraform/*
+.terraform/
 .terraform.lock.hcl
 secret.txt
 terraform.tfstate
 terraform.tfstate.backup
+terraform.tfstate.1747598675.backup
