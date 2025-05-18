@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo "Checking out source code..."
-                git branch: 'main', 
+                git branch: 'master', 
                 url: 'https://github.com/cap-mahdi/tp4-devops'
             }
         }
