@@ -15,6 +15,16 @@ pipeline {
             }
         }
 
+        stage('Terraform Import Existing Resource Group') {
+            steps {
+                sh '''
+                if ! terraform state list | grep azurerm_resource_group.rg; then
+                  terraform import azurerm_resource_group.rg /subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/rg-devops-lab
+                fi
+                '''
+            }
+        }
+
         stage('Terraform Plan') {
             steps {
                 sh 'terraform plan'
