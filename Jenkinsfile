@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        ARM_ACCESS_TOKEN = credentials('AZURE_ACCESS_TOKEN')
-        ARM_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
-        ARM_TENANT_ID       = credentials('AZURE_TENANT_ID')
+        ARM_CLIENT_ID       = credentials('AZURE_CLIENT_ID')
+        ARM_CLIENT_SECRET   = credentials('AZURE_CLIENT_SECRET')        
+        ARM_SUBSCRIPTION_ID= credentials('AZURE_SUBSCRIPTION_ID')
+        ARM_TENANT_ID= credentials('AZURE_TENANT_ID')
     }
 
     stages {
@@ -31,16 +32,14 @@ pipeline {
             steps {
                 echo "Generating Terraform plan..."
                 withCredentials([
-                        string(credentialsId: 'AZURE_ACCESS_TOKEN', variable: 'ARM_ACCESS_TOKEN'),
+                        string(credentialsId: 'AZURE_CLIENT_ID', variable: 'ARM_CLIENT_ID'),
+                        string(credentialsId: 'AZURE_CLIENT_SECRET', variable: 'ARM_CLIENT_SECRET'),
                         string(credentialsId: 'AZURE_SUBSCRIPTION_ID', variable: 'ARM_SUBSCRIPTION_ID'),
                         string(credentialsId: 'AZURE_TENANT_ID', variable: 'ARM_TENANT_ID')
                     ]) {
                         sh '''
                         export ARM_USE_OIDC=true
-                        terraform plan \
-                            -var="accessToken=$ARM_ACCESS_TOKEN" \
-                            -var="subscription=$ARM_SUBSCRIPTION_ID" \
-                            -var="tenant=$ARM_TENANT_ID" \
+                        terraform plan 
                             -out=tfplan
                         '''
                         archiveArtifacts artifacts: 'tfplan'

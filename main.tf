@@ -1,10 +1,6 @@
 provider "azurerm" {
   features {}
 
-  subscription_id = var.subscription
-  tenant_id       = var.tenant
-  use_oidc        = true
-  oidc_token      = var.accessToken
 }
 
 resource "azurerm_resource_group" "rg" {
