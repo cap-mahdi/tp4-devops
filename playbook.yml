@@ -1,0 +1,70 @@
+---
+- name: Configure Jenkins VM
+  hosts: all
+  gather_facts: false  # Disable initially to test connection
+
+  tasks:
+    - name: Test raw connection
+      raw: whoami
+      register: whoami
+      changed_when: false
+
+    - name: Debug connection
+      debug:
+        var: whoami
+
+    - name: Install Python (if missing)
+      raw: test -e /usr/bin/python || (apt-get update && apt-get install -y python3)
+      when: ansible_python_interpreter is not defined or ansible_python_interpreter == ''
+
+    - name: Gather facts
+      setup:
+
+    - name: Install Docker
+      block:
+        - name: Install dependencies
+          apt:
+            name:
+              - apt-transport-https
+              - ca-certificates
+              - curl
+              - software-properties-common
+              - python3-pip
+            state: present
+            update_cache: yes
+
+        - name: Add Docker GPG key
+          apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+
+        - name: Add Docker repository
+          apt_repository:
+            repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+            state: present
+
+        - name: Install Docker
+          apt:
+            name: docker-ce
+            state: present
+
+      when: ansible_facts is defined
+
+    - name: Start Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull application image
+      docker_image:
+        name: medaminegdouraucar/tp3-jenkins
+        source: pull
+
+    - name: Run container
+      docker_container:
+        name: nest-back
+        image: medaminegdouraucar/tp3-jenkins
+        state: started
+        ports:
+          - "3000:3000"

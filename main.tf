@@ -1,12 +1,10 @@
 provider "azurerm" {
   features {}
-
 }
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-devops-lab"
   location = "East US"
-
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -23,6 +21,14 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
+resource "azurerm_public_ip" "pip" {
+  name                = "pip-devops"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
 resource "azurerm_network_interface" "nic" {
   name                = "nic-devops"
   location            = azurerm_resource_group.rg.location
@@ -36,14 +42,6 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-resource "azurerm_public_ip" "pip" {
-  name                = "pip-devops"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
 resource "azurerm_linux_virtual_machine" "vm" {
   name                  = "vm-devops"
   resource_group_name   = azurerm_resource_group.rg.name
@@ -55,7 +53,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   admin_ssh_key {
     username   = "azureuser"
     public_key = file("/tmp/id_rsa.pub")
-
   }
 
   os_disk {
@@ -66,7 +63,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    sku       = "18_04-lts-gen2"
     version   = "latest"
   }
+}
+
+output "public_ip" {
+  description = "IP publique à ajouter dans l'inventaire Ansible"
+  value       = azurerm_public_ip.pip.ip_address
 }
