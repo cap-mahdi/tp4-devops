@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo "Checking out source code..."
                 git branch: 'master', 
-                url: 'https://github.com/cap-mahdi/tp4-devops'
+                url: 'https://github.com/neirezcher/terraform-jenkins.git'
             }
         }
 
