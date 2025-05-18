@@ -33,7 +33,7 @@ pipeline {
                
                         sh '''
                         export ARM_USE_OIDC=true
-                        terraform plan 
+                        terraform plan \
                             -out=tfplan
                         '''
                         archiveArtifacts artifacts: 'tfplan'
